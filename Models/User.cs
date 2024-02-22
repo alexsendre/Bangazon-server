@@ -15,6 +15,8 @@ namespace BangazonBE.Models
         public string Email { get; set; }
         public string? Bio { get; set; }
         public string? ProfileImageUrl { get; set; }
+        [Required]
+        public bool IsSeller { get; set; }
         public DateTime DateCreated { get; set; }
         [Required]
         public string Uid { get; set; }
