@@ -51,4 +51,9 @@ app.MapGet("/api/{sellerId}/products", (BangazonDbContext db, int sellerId) =>
     return db.Products.Single(u => u.SellerId == sellerId);
 });
 
+app.MapGet("/api/products/{productId}", (BangazonDbContext db, int productId) =>
+{
+    return db.Products.Single(p => p.Id == productId);
+});
+
 app.Run();
