@@ -46,4 +46,9 @@ app.MapGet("/api/categories", (BangazonDbContext db) =>
     return db.Categories.ToList();
 });
 
+app.MapGet("/api/{sellerId}/products", (BangazonDbContext db, int sellerId) =>
+{
+    return db.Products.Single(u => u.SellerId == sellerId);
+});
+
 app.Run();
