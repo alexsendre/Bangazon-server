@@ -31,4 +31,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapGet("/api/users", (BangazonDbContext db) =>
+{
+    return db.Users.ToList();
+});
+
+app.MapGet("/api/products", (BangazonDbContext db) =>
+{
+    return db.Products.ToList();
+});
+
+app.MapGet("/api/categories", (BangazonDbContext db) =>
+{
+    return db.Categories.ToList();
+});
+
 app.Run();
