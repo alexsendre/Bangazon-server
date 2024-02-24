@@ -159,4 +159,13 @@ app.MapDelete("/api/orders/{orderId}/products/{productId}", (BangazonDbContext d
     return Results.Created($"/api/orders/{orderId}/products/{productId}", product);
 });
 
+// user specific - get past sales
+app.MapGet("/api/{sellerId}/complete", (BangazonDbContext db, int sellerId) =>
+{
+    return db.Orders
+        .Where(o => o.CustomerId == sellerId)
+        .Where(c => c.IsComplete)
+        .ToList();
+});
+
 app.Run();
