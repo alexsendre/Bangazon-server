@@ -124,7 +124,7 @@ app.MapPost("/api/orders", (BangazonDbContext db, Order newOrder) =>
 app.MapPost("/api/orders/{orderId}/products/{productId}", (BangazonDbContext db, int orderId, int productId) =>
 {
     var order = db.Orders.Include(o => o.Products).FirstOrDefault(o => o.Id == orderId);
-    var productToAdd = db.Products.Find(productId);
+    var productToAdd = db.Products.FirstOrDefault(p => p.Id == productId);
 
     try
     {
