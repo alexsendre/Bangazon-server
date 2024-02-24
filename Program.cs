@@ -72,4 +72,9 @@ app.MapGet("/api/orders/{id}/history", (BangazonDbContext db, int id) =>
     return db.Orders.Where(u => u.CustomerId == id).ToList();
 });
 
+app.MapGet("/api/users/{id}", (BangazonDbContext db, int id) =>
+{
+    return db.Users.Where(u => u.Id ==  id).ToList();
+});
+
 app.Run();
