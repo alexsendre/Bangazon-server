@@ -77,4 +77,9 @@ app.MapGet("/api/users/{id}", (BangazonDbContext db, int id) =>
     return db.Users.Where(u => u.Id ==  id).ToList();
 });
 
+app.MapGet("/api/categories/{categoryId}", (BangazonDbContext db, int categoryId) =>
+{
+    return db.Products.Where(u => u.CategoryId == categoryId);
+});
+
 app.Run();
