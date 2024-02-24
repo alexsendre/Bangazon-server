@@ -85,8 +85,8 @@ app.MapGet("/api/categories/{categoryId}", (BangazonDbContext db, int categoryId
     return db.Products.Where(u => u.CategoryId == categoryId);
 });
 
-// search for products (case sensitive)
-app.MapGet("/api/search/product", (BangazonDbContext db, string query) =>
+// search for products or sellers (case sensitive)
+app.MapGet("/api/search", (BangazonDbContext db, string query) =>
 {
     if (string.IsNullOrWhiteSpace(query))
     {
@@ -94,35 +94,29 @@ app.MapGet("/api/search/product", (BangazonDbContext db, string query) =>
     }
 
     var products = db.Products.Where(p => p.Title.Contains(query)).ToList();
+    var users = db.Users.Where(p => p.FirstName.Contains(query) || p.LastName.Contains(query)).ToList();
 
-    if (products.Count == 0)
+    var responseData = new
     {
-        return Results.NotFound("The product with this name does not exist.");
+        products,
+        users
+    };
+
+    if (products.Count == 0 && users.Count == 0)
+    {
+        return Results.NotFound("No results found.");
     }
     else
     {
-        return Results.Ok(products);
+        return Results.Ok(responseData);
     }
 });
 
-// search for seller (case sensitive)
-app.MapGet("/api/search/seller", (BangazonDbContext db, string query) =>
+app.MapPost("/api/orders", (BangazonDbContext db, Order newOrder) =>
 {
-    if (string.IsNullOrWhiteSpace(query))
-    {
-        return Results.BadRequest("Search query cannot be empty.");
-    }
-
-    var users = db.Users.Where(p => p.FirstName.Contains(query) || p.LastName.Contains(query)).ToList();
-
-    if (users.Count == 0)
-    {
-        return Results.NotFound("This seller does not exist.");
-    }
-    else
-    {
-        return Results.Ok(users);
-    }
+    db.Orders.Add(newOrder);
+    db.SaveChanges();
+    return Results.Created($"/api/orders/{newOrder.Id}", newOrder);
 });
 
 app.Run();
