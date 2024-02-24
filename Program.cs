@@ -119,4 +119,44 @@ app.MapPost("/api/orders", (BangazonDbContext db, Order newOrder) =>
     return Results.Created($"/api/orders/{newOrder.Id}", newOrder);
 });
 
+app.MapPost("/api/orders/{orderId}/products/{productId}", (BangazonDbContext db, int orderId, int productId) =>
+{
+    var order = db.Orders.Include(o => o.Products).FirstOrDefault(o => o.Id == orderId);
+    var product = db.Products.Find(productId);
+
+    if (order == null)
+    {
+        return Results.NotFound("Order was not found");
+    }
+
+    if (product == null)
+    {
+        return Results.NotFound("Product was not found");
+    }
+
+    order.Products.Add(product);
+    db.SaveChanges();
+    return Results.Created($"/api/orders/{orderId}/products/{productId}", product);
+});
+
+app.MapDelete("/api/orders/{orderId}/products/{productId}", (BangazonDbContext db, int orderId, int productId) =>
+{
+    var order = db.Orders.Include(o => o.Products).FirstOrDefault(o => o.Id == orderId);
+    var product = db.Products.Find(productId);
+
+    if (order == null)
+    {
+        return Results.NotFound("Order was not found");
+    }
+
+    if (product == null)
+    {
+        return Results.NotFound("Product was not found");
+    }
+
+    order.Products.Remove(product);
+    db.SaveChanges();
+    return Results.Created($"/api/orders/{orderId}/products/{productId}", product);
+});
+
 app.Run();
