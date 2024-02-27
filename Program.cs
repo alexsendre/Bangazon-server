@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
 using BangazonBE;
+using System.Data.Common;
+using BangazonBE.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +39,12 @@ app.MapGet("/api/users", (BangazonDbContext db) =>
     return db.Users.ToList();
 });
 
+// get (self) profile data
+app.MapGet("/api/users/{id}", (BangazonDbContext db, int id) =>
+{
+    return db.Users.Where(u => u.Id == id).ToList();
+});
+
 // get all products
 app.MapGet("/api/products", (BangazonDbContext db) =>
 {
@@ -52,7 +60,7 @@ app.MapGet("/api/categories", (BangazonDbContext db) =>
 // get specific seller products
 app.MapGet("/api/{sellerId}/products", (BangazonDbContext db, int sellerId) =>
 {
-    return db.Products.Where(u => u.SellerId == sellerId);
+    return db.Products.Where(u => u.SellerId == sellerId).ToList();
 });
 
 // get product details
@@ -71,12 +79,6 @@ app.MapGet("/api/orders/complete", (BangazonDbContext db) =>
 app.MapGet("/api/orders/{id}/history", (BangazonDbContext db, int id) =>
 {
     return db.Orders.Where(u => u.CustomerId == id).ToList();
-});
-
-// get (self) profile data
-app.MapGet("/api/users/{id}", (BangazonDbContext db, int id) =>
-{
-    return db.Users.Where(u => u.Id ==  id).ToList();
 });
 
 // get products by category
@@ -115,22 +117,29 @@ app.MapGet("/api/search", (BangazonDbContext db, string query) =>
 // create order
 app.MapPost("/api/orders", (BangazonDbContext db, Order newOrder) =>
 {
-    db.Orders.Add(newOrder);
-    db.SaveChanges();
-    return Results.Created($"/api/orders/{newOrder.Id}", newOrder);
+    try
+    {
+        db.Orders.Add(newOrder);
+        db.SaveChanges();
+        return Results.Created($"/api/orders/{newOrder.Id}", newOrder);
+    }
+    catch (DbException)
+    {
+        return Results.BadRequest("Something went wrong, invalid submission.");
+    }
 });
 
 // add to cart
-app.MapPost("/api/orders/{orderId}/products/{productId}", (BangazonDbContext db, int orderId, int productId) =>
+app.MapPost("/api/orders/add", (BangazonDbContext db, AddToCartDTO newItem) =>
 {
-    var order = db.Orders.Include(o => o.Products).FirstOrDefault(o => o.Id == orderId);
-    var productToAdd = db.Products.FirstOrDefault(p => p.Id == productId);
+    var order = db.Orders.Include(o => o.Products).FirstOrDefault(o => o.Id == newItem.OrderId);
+    var productToAdd = db.Products.Find(newItem.ProductId);
 
     try
     {
         order.Products.Add(productToAdd);
         db.SaveChanges();
-        return Results.Created($"/api/orders/{orderId}/products/{productId}", productToAdd);
+        return Results.Created($"/api/orders/add", newItem);
     }
     catch
     {
@@ -160,12 +169,13 @@ app.MapDelete("/api/orders/{orderId}/products/{productId}", (BangazonDbContext d
 });
 
 // user specific - get past sales
-app.MapGet("/api/{sellerId}/complete", (BangazonDbContext db, int sellerId) =>
-{
-    return db.Orders
-        .Where(o => o.CustomerId == sellerId)
-        .Where(c => c.IsComplete)
-        .ToList();
-});
+//app.MapGet("/api/{sellerId}/complete", (BangazonDbContext db, int sellerId) =>
+//{
+//    return db.Products
+//        .Include(o => o.Orders)
+//        .Where(s => s.SellerId == sellerId)
+//        .Where(c => c.IsComplete)
+//        .ToList();
+//});
 
 app.Run();
