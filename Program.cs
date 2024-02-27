@@ -166,6 +166,28 @@ app.MapGet("/api/categories/{categoryId}", (BangazonDbContext db, int categoryId
     return db.Products.Where(u => u.CategoryId == categoryId);
 });
 
+// create category
+app.MapPost("/api/categories", (BangazonDbContext db, Category category) =>
+{
+    db.Categories.Add(category);
+    db.SaveChanges();
+    return Results.Created($"/api/categories/{category.Id}", category);
+});
+
+app.MapDelete("/api/categories/{id}", (BangazonDbContext db, int id) =>
+{
+    var category = db.Categories.SingleOrDefault(category => category.Id == id);
+
+    if (category == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Categories.Remove(category);
+    db.SaveChanges();
+    return Results.NoContent();
+});
+
 // PAYMENT DATA \\
 
 // get all payment types
