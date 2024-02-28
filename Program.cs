@@ -22,7 +22,20 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5003")
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -223,6 +236,25 @@ app.MapGet("/api/search", (BangazonDbContext db, string query) =>
     {
         return Results.Ok(responseData);
     }
+});
+
+// AUTH DATA \\
+
+app.MapPost("/api/register", (BangazonDbContext db, User user) =>
+{
+    db.Users.Add(user);
+    db.SaveChanges();
+    return Results.Created($"/api/users/{user.Id}", user);
+});
+
+app.MapGet("/api/checkuser/{uid}", (BangazonDbContext db, string uid) =>
+{
+    var existingUser = db.Users.Where(u => u.Uid == uid).ToList();
+    if (existingUser == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(existingUser);
 });
 
 
