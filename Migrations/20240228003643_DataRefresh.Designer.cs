@@ -3,6 +3,7 @@ using System;
 using BangazonBE;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BangazonBE.Migrations
 {
     [DbContext(typeof(BangazonDbContext))]
-    partial class BangazonDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240228003643_DataRefresh")]
+    partial class DataRefresh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,7 +175,7 @@ namespace BangazonBE.Migrations
                             Id = 1,
                             CategoryId = 1,
                             Description = "Heat it up bro",
-                            ImageUrl = "https://images.thdstatic.com/productImages/45192fb2-63e1-429d-a340-eea0644cadec/svn/stainless-steel-whirlpool-over-the-range-microwaves-wmh31017hs-64_600.jpg",
+                            ImageUrl = "blankfornow",
                             IsAvailable = true,
                             Price = 299.99m,
                             QuantityAvailable = 3,
@@ -185,7 +187,7 @@ namespace BangazonBE.Migrations
                             Id = 2,
                             CategoryId = 2,
                             Description = "Type me up bro",
-                            ImageUrl = "https://cdn.thewirecutter.com/wp-content/media/2023/11/mechanicalkeyboards-2048px-9138.jpg?auto=webp&quality=75&crop=1.91:1&width=1200",
+                            ImageUrl = "blankfornow",
                             IsAvailable = true,
                             Price = 149.99m,
                             QuantityAvailable = 2,
@@ -197,7 +199,7 @@ namespace BangazonBE.Migrations
                             Id = 3,
                             CategoryId = 3,
                             Description = "Strum me bro",
-                            ImageUrl = "https://m.media-amazon.com/images/I/714kO41XjDL.jpg",
+                            ImageUrl = "blankfornow",
                             IsAvailable = false,
                             Price = 649.99m,
                             QuantityAvailable = 0,
@@ -278,7 +280,7 @@ namespace BangazonBE.Migrations
                         {
                             Id = 3,
                             Bio = "I am Jackson Black",
-                            DateCreated = new DateTime(2024, 2, 27, 20, 25, 49, 343, DateTimeKind.Local).AddTicks(7174),
+                            DateCreated = new DateTime(2024, 2, 27, 18, 36, 43, 568, DateTimeKind.Local).AddTicks(195),
                             Email = "jackblack@test.com",
                             FirstName = "Jack",
                             IsSeller = false,

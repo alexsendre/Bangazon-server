@@ -18,7 +18,6 @@ namespace BangazonBE.Models
         [Required]
         public bool IsSeller { get; set; }
         public DateTime DateCreated { get; set; }
-        [Required]
-        public string Uid { get; set; }
+        public string? Uid { get; set; }
     }
 }
