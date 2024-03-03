@@ -82,6 +82,20 @@ app.MapGet("/api/products/{productId}", (BangazonDbContext db, int productId) =>
 
 // ORDER DATA \\
 
+// get orders
+app.MapGet("/api/orders", (BangazonDbContext db) =>
+{
+    return db.Orders.Where(o => o.IsComplete == false).ToList();
+});
+
+// get order details (products)
+app.MapGet("api/orders/{id}/products", (BangazonDbContext db, int id) =>
+{
+    Order order = db.Orders.Include(o => o.Products).SingleOrDefault(o => o.Id == id);
+
+    return Results.Ok(order);
+});
+
 // get order history
 app.MapGet("/api/orders/{id}/history", (BangazonDbContext db, int id) =>
 {
